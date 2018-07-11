@@ -1,6 +1,9 @@
 package dbops
 
-import "log"
+import (
+	"log"
+	"database/sql"
+)
 
 //func OpenConn() *sql.DB {
 //
@@ -22,12 +25,15 @@ func AddUserCredential(loginName string, pwd string) error {
 
 	}
 
-	stmtIns.Exec(loginName, pwd)
-	stmtIns.Close()
+	_, err = stmtIns.Exec(loginName, pwd)
+	if err != nil {
+		return err
+	}
+	defer stmtIns.Close()
 	return nil
 }
 
-func GetUserCredential(loginName string ) (string, error) {
+func GetUserCredential(loginName string) (string, error) {
 
 	stmtOut, err := dbConn.Prepare("select pwd from users where login_name=?")
 	if err != nil {
@@ -35,9 +41,12 @@ func GetUserCredential(loginName string ) (string, error) {
 		return "", err
 	}
 	var pwd string
-	stmtOut.QueryRow(loginName).Scan(&pwd)
+	err = stmtOut.QueryRow(loginName).Scan(&pwd)
+	if err != nil && err != sql.ErrNoRows {
+		return "", err
+	}
 
-	stmtOut.Close()
+	defer stmtOut.Close()
 	return pwd, nil
 
 }
@@ -49,7 +58,10 @@ func DeleteUser(loginName string, pwd string) error {
 		return err
 	}
 
-	stmtDel.Exec(loginName, pwd)
+	_, err = stmtDel.Exec(loginName, pwd)
+	if err != nil {
+		return err
+	}
 	stmtDel.Close()
 	return err
 }

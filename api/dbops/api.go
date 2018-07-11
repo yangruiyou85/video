@@ -102,7 +102,6 @@ func AddNewVideo(aid int, name string) (*defs.VideoInfo, error) {
 
 func GetVideoInfo(vid string) (*defs.VideoInfo, error) {
 
-
 	stmtOut, err := dbConn.Prepare("select author_id,name,display_ctime from video_info where video_id=?")
 
 	var aid int
@@ -142,9 +141,9 @@ func DeleteVideoInfo(vid string) error {
 }
 
 func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
-	stmtOut, err := dbConn.Prepare(`SELECT a.vedio_id, a.author_id, a.name, a.display_ctime 
+	stmtOut, err := dbConn.Prepare(`SELECT a.video_id, a.author_id, a.name, a.display_ctime 
              FROM video_info a 		  
-              JOIN users b ON a.author_id = b.users.id
+              JOIN users b ON a.author_id = b.author_id
 		WHERE b.login_name = ? AND a.create_time > FROM_UNIXTIME(?) AND a.create_time <= FROM_UNIXTIME(?) 
 		ORDER BY a.create_time DESC`)
 
@@ -174,4 +173,50 @@ func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
 
 	defer stmtOut.Close()
 	return res, nil
+}
+
+func AddNewComments(vid string, aid int, content string) error {
+	id, err := utils.NewUUID()
+	if err != nil {
+		return err
+	}
+
+	stmtIns, err := dbConn.Prepare("insert into comments(comment_id,video_id,author_id,content) value(?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	_, err = stmtIns.Exec(id, vid, aid, content)
+	if err != nil {
+		return err
+	}
+
+	defer stmtIns.Close()
+	return nil
+}
+
+func ListComments(vid string, from, to int) ([]*defs.Comment, error) {
+
+	stmtOut, err := dbConn.Prepare(`select b.comment_id,a.login_name,b.content
+                from users a 
+                join comments b on a.author_id=b.author_id
+	          where b.video_id=?  and b.time>from_unixtime(?) and b.time<= from_unixtime(?)`)
+
+	var res []*defs.Comment
+	rows, err := stmtOut.Query(vid, from, to)
+	if err != nil {
+		return res, err
+	}
+	for rows.Next() {
+		var id, name, content string
+		if err := rows.Scan(&id, &name, &content); err != nil {
+			return res, err
+		}
+		c := &defs.Comment{Id: id, VideoId: vid, Author: name, Content: content}
+		res = append(res, c)
+	}
+
+	defer stmtOut.Close()
+	return res, nil
+
 }

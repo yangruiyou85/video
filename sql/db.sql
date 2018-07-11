@@ -17,7 +17,7 @@ ttl tinytext,login_name varchar(64)) engine=innodb;
 
 
 
-create table  comments(command_id varchar(64) not null primary key,video_id varchar(64),
+create table  comments(comment_id varchar(64) not null primary key,video_id varchar(64),
 
 author_id  bigint,content text,time datetime
 ) engine=innodb;

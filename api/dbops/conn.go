@@ -17,7 +17,8 @@ func init() {
 	//dbConn, err = sql.Open("mysql", "root:mysql@tcp(localhost:3306)/video?charset=utf8")
 	if err != nil {
 		panic(err.Error())
+		//fmt.Println(err.Error())
+		//Println(err.Error())
 
 	}
 }
-

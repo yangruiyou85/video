@@ -29,7 +29,7 @@ func AddUserCredential(loginName string, pwd string) error {
 
 func GetUserCredential(loginName string ) (string, error) {
 
-	stmtOut, err := dbConn.Prepare("select pwd from users where login_name=? and pwd=?")
+	stmtOut, err := dbConn.Prepare("select pwd from users where login_name=?")
 	if err != nil {
 		log.Printf("%s", err)
 		return "", err

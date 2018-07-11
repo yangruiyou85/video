@@ -27,9 +27,9 @@ func AddUserCredential(loginName string, pwd string) error {
 	return nil
 }
 
-func GetUserCredential(loginName string) (string, error) {
+func GetUserCredential(loginName string ) (string, error) {
 
-	stmtOut, err := dbConn.Prepare("select pwd from users where login_name=?")
+	stmtOut, err := dbConn.Prepare("select pwd from users where login_name=? and pwd=?")
 	if err != nil {
 		log.Printf("%s", err)
 		return "", err
@@ -45,7 +45,7 @@ func GetUserCredential(loginName string) (string, error) {
 func DeleteUser(loginName string, pwd string) error {
 	stmtDel, err := dbConn.Prepare("delete from users where login_name=? and  pwd=?")
 	if err != nil {
-		log.Printf("DeleteUser error:%s", err)
+		log.Printf("Delete User error:%s", err)
 		return err
 	}
 

@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"github.com/yangruiyou85/video/utils"
 )
 
 type middleWareHandler struct {
@@ -19,7 +18,7 @@ func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
 
 func (m middleWareHandler) ServerHTTP(w http.ResponseWriter, r *http.Request) {
 
-	validateUserSession(r)
+	//validateUserSession(r)
 
 	m.r.ServeHTTP(w, r)
 }

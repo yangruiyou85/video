@@ -8,7 +8,7 @@ import (
 	"github.com/yangruiyou85/video/api/defs"
 	"encoding/json"
 	"github.com/yangruiyou85/video/api/dbops"
-	"github.com/yangruiyou85/video/session"
+	"github.com/yangruiyou85/video/api/session"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {

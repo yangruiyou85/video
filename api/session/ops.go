@@ -4,7 +4,7 @@ import (
 	"sync"
 	"github.com/yangruiyou85/video/api/dbops"
 	"github.com/yangruiyou85/video/api/defs"
-	"github.com/yangruiyou85/video/utils"
+	"github.com/yangruiyou85/video/api/utils"
 	"time"
 )
 

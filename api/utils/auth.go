@@ -2,7 +2,7 @@ package utils
 
 import (
 	"net/http"
-	"github.com/yangruiyou85/video/session"
+	"github.com/yangruiyou85/video/api/session"
 )
 
 var HEADER_FIELD_SESSION = "X-Session-Id"

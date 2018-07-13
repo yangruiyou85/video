@@ -32,12 +32,29 @@ func GenerateNewSessionId(un string) string {
 	id, _ := utils.NewUUID()
 	ct := time.Now().UnixNano() / 1000000
 	ttl := ct + 30*60*1000
-	ss:=&defs.SimpleSession{Username:un,TTL:ttl}
-	sessionMap.Store(id,ss)
-	dbops.InsertSession(id,ttl,un)
+	ss := &defs.SimpleSession{Username: un, TTL: ttl}
+	sessionMap.Store(id, ss)
+	dbops.InsertSession(id, ttl, un)
 	return id
 }
 
+func deleteExpiredSession(){
+
+}
+
 func IsSessionExpired(sid string) (string, bool) {
+
+	ss, ok := sessionMap.Load(sid)
+	if ok {
+		ct := nowInMilli()
+		if ss.(*defs.SimpleSession).TTL < ct {
+			deleteExpiredSession(sid)
+			return "", true
+		}
+
+		return ss.(*defs.SimpleSession).Username, false
+
+	}
+	return "", true
 
 }

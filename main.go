@@ -3,7 +3,26 @@ package main
 import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"github.com/yangruiyou85/video/utils"
 )
+
+type middleWareHandler struct {
+	r *httprouter.Router
+}
+
+func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
+	m := middleWareHandler{}
+	m.r = r
+	return m
+
+}
+
+func (m middleWareHandler) ServerHTTP(w http.ResponseWriter, r *http.Request) {
+
+	validateUserSession(r)
+
+	m.r.ServeHTTP(w, r)
+}
 
 func RegisterHandlers() *httprouter.Router {
 
@@ -21,3 +40,5 @@ func main() {
 }
 
 // handler->validation{}
+
+//main--->middleware-defs(message,err)-->handlers--->dbops--->response--->

@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"net/http"
@@ -16,6 +16,7 @@ func sendErrorResponse(w http.ResponseWriter, errResp defs.ErrorResponse) {
 }
 
 func sendNormalResponse(w http.ResponseWriter, resp string, sc int) {
-	uname := w.WriteHeader(sc)
-	io.WriteString(w, uname)
+
+	w.WriteHeader(sc)
+	io.WriteString(w, resp)
 }

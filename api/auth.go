@@ -3,6 +3,7 @@ package utils
 import (
 	"net/http"
 	"github.com/yangruiyou85/video/api/session"
+	"github.com/yangruiyou85/video/api/defs"
 )
 
 var HEADER_FIELD_SESSION = "X-Session-Id"
@@ -22,12 +23,13 @@ func validateUserSession(r *http.Request) bool {
 	return true
 }
 
-func ValidateUser(w http.ResponseWriter, r *http.Request) {
+func ValidateUser(w http.ResponseWriter, r *http.Request) bool {
 
 	uname := r.Header.Get(HEADER_FIELD_UNAME)
 	if len(uname) == 0 {
-		sendErrorResponse()
+		sendErrorResponse(w, defs.ErrorNotAuthUser)
 		return false
+
 	}
 
 	return true

@@ -11,10 +11,15 @@ import (
 var sessionMap *sync.Map
 
 func init() {
-	sessionMap := &sync.Map{}
+	sessionMap = &sync.Map{}
 }
 
-func LoadSessionFromDB() string {
+func nowInMilli() int64 {
+	return time.Now().UnixNano() / 1000000
+
+}
+
+func LoadSessionFromDB() {
 	r, err := dbops.RetrieveAllSessions()
 	if err != nil {
 		return
@@ -38,13 +43,16 @@ func GenerateNewSessionId(un string) string {
 	return id
 }
 
-func deleteExpiredSession(){
+func deleteExpiredSession(sid string) {
+	sessionMap.Delete(sid)
+	dbops.DeleteSession(sid)
 
 }
 
 func IsSessionExpired(sid string) (string, bool) {
 
 	ss, ok := sessionMap.Load(sid)
+	ct := nowInMilli()
 	if ok {
 		ct := nowInMilli()
 		if ss.(*defs.SimpleSession).TTL < ct {
@@ -54,7 +62,21 @@ func IsSessionExpired(sid string) (string, bool) {
 
 		return ss.(*defs.SimpleSession).Username, false
 
+	} else {
+		ss, err := dbops.RetrieveSession(sid)
+		if err != nil || ss == nil {
+			return "", true
+
+		}
+		if ss.TTL < ct {
+			deleteExpiredSession(sid)
+			return "", true
+		}
+
+		sessionMap.Store(sid, ss)
+		return ss.Username, false
 	}
+
 	return "", true
 
 }

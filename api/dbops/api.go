@@ -140,12 +140,15 @@ func DeleteVideoInfo(vid string) error {
 
 }
 
+
+
 func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
 	stmtOut, err := dbConn.Prepare(`SELECT a.video_id, a.author_id, a.name, a.display_ctime 
              FROM video_info a 		  
               JOIN users b ON a.author_id = b.author_id
 		WHERE b.login_name = ? AND a.create_time > FROM_UNIXTIME(?) AND a.create_time <= FROM_UNIXTIME(?) 
 		ORDER BY a.create_time DESC`)
+
 
 	var res []*defs.VideoInfo
 	if err != nil {

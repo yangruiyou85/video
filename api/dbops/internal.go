@@ -15,7 +15,7 @@ func InsertSession(sid string, ttl int64, uname string) error {
 		return err
 	}
 
-	_, err := stmtIns.Exec(sid, ttlstr, uname)
+	_, err = stmtIns.Exec(sid, ttlstr, uname)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func RetrieveAllSessions() (*sync.Map, error) {
 			log.Printf("retrive sessions error:%s", er)
 			break
 		}
-		if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err == nil {
+		if ttl, err1 := strconv.ParseInt(ttlstr, 10, 64); err1 == nil {
 			ss := &defs.SimpleSession{Username: login_name, TTL: ttl}
 			m.Store(id, ss)
 			log.Printf("session id:%s,ttl:%d", id, ss.TTL)
@@ -88,4 +88,14 @@ func RetrieveAllSessions() (*sync.Map, error) {
 
 func DeleteSession(sid string) error {
 
+
+	stmtOut,err:=dbConn.Prepare("delete from sessions where session_id=?")
+	if err!=nil{
+		log.Printf("%s",err)
+		return err
+	}
+	if _,err:=stmtOut.Query(sid);err!=nil{
+		return err
+	}
+	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/yangruiyou85/video/api/defs"
 	"github.com/yangruiyou85/video/api/utils"
 	"time"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 //func OpenConn() *sql.DB {

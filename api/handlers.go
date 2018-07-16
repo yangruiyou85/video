@@ -1,4 +1,4 @@
-package utils
+package main
 
 import (
 	"net/http"
@@ -69,6 +69,7 @@ func Login(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 	id := session.GenerateNewSessionId(ubody.Username)
 	si := &defs.SignedIn{Success: true, SessionId: id}
+
 	if resp, err := json.Marshal(si); err != nil {
 		sendErrorResponse(w, defs.ErrorInternalFaults)
 	} else {
@@ -85,7 +86,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 
 	uname := p.ByName("username")
-	u, err := dbops.GetUserCredential(uname)
+	u, err := dbops.GetUser(uname)
 	if err != nil {
 		log.Printf("Error in GetUserInfo: %s", err)
 		sendErrorResponse(w, defs.ErrorDBError)
@@ -146,6 +147,7 @@ func ListAllVideos(w http.ResponseWriter, r *http.Request, p httprouter.Params) 
 	}
 
 	vsi := &defs.VideosInfo{Videos: vs}
+
 	if resp, err := json.Marshal(vsi); err != nil {
 		sendErrorResponse(w, defs.ErrorInternalFaults)
 	} else {

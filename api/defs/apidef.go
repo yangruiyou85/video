@@ -21,11 +21,16 @@ type SignedUp struct {
 }
 
 //data model
+
 type VideoInfo struct {
-	Id           string
-	AuthorId     int
-	Name         string
-	DisplayCtime string
+	Id           string `json:"id"`
+	AuthorId     int    `json:"author_id"`
+	Name         string `json:"name"`
+	DisplayCtime string `json:"display_ctime"`
+}
+
+type VideosInfo struct {
+	Videos []*VideoInfo `json:"videos"`
 }
 
 type Comment struct {
@@ -58,4 +63,7 @@ type Comments struct {
 	Comments []*Comment `json:"comments"`
 }
 
-
+type SignedIn struct {
+	Success   bool   `json:"success"`
+	SessionId string `json:"session_id"`
+}

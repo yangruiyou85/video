@@ -1,8 +1,9 @@
-package utils
+package main
 
 import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"github.com/yangruiyou85/video/api/session"
 )
 
 type middleWareHandler struct {
@@ -10,8 +11,10 @@ type middleWareHandler struct {
 }
 
 func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
+
 	m := middleWareHandler{}
 	m.r = r
+
 	return m
 
 }
@@ -42,10 +45,16 @@ func RegisterHandlers() *httprouter.Router {
 
 }
 
-func main() {
+func Prepare() {
 
+	session.LoadSessionFromDB()
+}
+
+func main() {
+	Prepare()
 	r := RegisterHandlers()
-	http.ListenAndServe(":8000", r)
+	mh := NewMiddleWareHandler(r)
+	http.ListenAndServe(":8000", mh)
 }
 
 // handler->validation{}

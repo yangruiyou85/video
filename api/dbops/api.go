@@ -54,6 +54,32 @@ func GetUserCredential(loginName string) (string, error) {
 
 }
 
+func GetUser(loginName string) (*defs.User, error) {
+	stmtOut, err := dbConn.Prepare("SELECT id, pwd FROM users WHERE login_name = ?")
+	if err != nil {
+		log.Printf("%s", err)
+		return nil, err
+	}
+
+	var id int
+	var pwd string
+
+	err = stmtOut.QueryRow(loginName).Scan(&id, &pwd)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+
+	res := &defs.User{Id: id, LoginName: loginName, Pwd: pwd}
+
+	defer stmtOut.Close()
+
+	return res, nil
+}
+
 func DeleteUser(loginName string, pwd string) error {
 	stmtDel, err := dbConn.Prepare("delete from users where login_name=? and  pwd=?")
 	if err != nil {
@@ -140,15 +166,12 @@ func DeleteVideoInfo(vid string) error {
 
 }
 
-
-
 func ListVideoInfo(uname string, from, to int) ([]*defs.VideoInfo, error) {
 	stmtOut, err := dbConn.Prepare(`SELECT a.video_id, a.author_id, a.name, a.display_ctime 
              FROM video_info a 		  
               JOIN users b ON a.author_id = b.author_id
 		WHERE b.login_name = ? AND a.create_time > FROM_UNIXTIME(?) AND a.create_time <= FROM_UNIXTIME(?) 
 		ORDER BY a.create_time DESC`)
-
 
 	var res []*defs.VideoInfo
 	if err != nil {

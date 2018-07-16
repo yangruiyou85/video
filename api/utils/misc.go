@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"strconv"
 	"time"
+	"github.com/yangruiyou85/video/streamserver/config"
+	"log"
+	"net/http"
 )
+
 // https://github.com/satori/go.uuid/blob/master/uuid.go
 func NewUUID() (string, error) {
 
@@ -27,11 +31,14 @@ func GetCurrentTimestampSec() int {
 	return ts
 }
 
-//func SendDeleteVideoRequest(id string) {
-//	addr := config.GetLbAddr() + ":9001"
-//	url := "http://" + addr + "/video-delete-record/" + id
-//	_, err := http.Get(url)
-//	if err != nil {
-//		log.Printf("Sending deleting video request error: %s", err)
-//	}
-//}
+func SendDeleteVideoRequest(id string) {
+
+	addr := config.GetLbAddr() + ":9001"
+	url := "http://" + addr + "/video-delete-record/" + id
+	_, err := http.Get(url)
+
+	if err != nil {
+		log.Printf("Sending deleting video request error: %s", err)
+
+	}
+}
